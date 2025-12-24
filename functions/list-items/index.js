@@ -19,7 +19,24 @@ exports.handler = async (event) => {
 
     try {
         // Scan the DynamoDB table to get all products
-        
+        const command = new ScanCommand({
+            TableName: TABLE_NAME
+        });
+
+        const result = await dynamodb.send(command);
+
+        console.log(`Retrieved ${result.Items.length} products`);
+
+        return {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({
+                products: result.Items || []
+            })
+        };
     } catch (error) {
         console.error('Error listing products:', error);
 
